@@ -6,8 +6,7 @@ import { ThemedView } from "@/components/themed-view";
 import ParallaxScrollView from "@/components/parallax-scroll-view";
 import { HelloWave } from "@/components/hello-wave";
 import { Ionicons } from "@expo/vector-icons";
-
-
+import { MY_PROFILE } from "@/lib/mockData"; // Import user data
 
 export default function HomeScreen() {
   return (
@@ -15,19 +14,19 @@ export default function HomeScreen() {
       headerBackgroundColor={{ light: "#FCEEE3", dark: "#1A1A1A" }}
       headerImage={
         <Image
-  source={require("@/assets/images/banner.png")}
-  style={styles.headerImage}
-/>
+          source={require("@/assets/images/banner.png")}
+          style={styles.headerImage}
+        />
       }
     >
       {/* Welcome Header */}
       <ThemedView style={styles.headerContainer}>
         <View>
           <ThemedText type="title" style={styles.titleText}>
-            Welcome Back 
+            Welcome Back, {MY_PROFILE.name.split(" ")[0]}!
           </ThemedText>
           <ThemedText type="subtitle" style={styles.subText}>
-            Ready to get things done today?
+            Ready to find your next opportunity?
           </ThemedText>
         </View>
         <HelloWave />
@@ -56,16 +55,17 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.buttonRow}>
+          {/* This button is REPURPOSED */}
           <Link href="/(tabs)/reviews" asChild>
             <TouchableOpacity style={styles.actionButton}>
-              <Ionicons name="chatbox-ellipses-outline" size={42} color="#cc5500" />
-              <ThemedText style={styles.actionText}>Reviews</ThemedText>
+              <Ionicons name="people-outline" size={42} color="#cc5500" />
+              <ThemedText style={styles.actionText}>Network</ThemedText>
             </TouchableOpacity>
           </Link>
 
           <Link href="/(tabs)/profile" asChild>
             <TouchableOpacity style={styles.actionButton}>
-             <Ionicons name="person-outline" size={42} color="#cc5500" />
+              <Ionicons name="person-outline" size={42} color="#cc5500" />
               <ThemedText style={styles.actionText}>Profile</ThemedText>
             </TouchableOpacity>
           </Link>
@@ -75,11 +75,11 @@ export default function HomeScreen() {
       {/* Tip / Info Section */}
       <ThemedView style={styles.tipCard}>
         <ThemedText type="subtitle" style={styles.tipTitle}>
-          💡 Productivity Tip
+          💡 Networking Tip
         </ThemedText>
         <ThemedText style={styles.tipText}>
-          Break your day into focused 45-minute sessions with 5-minute breaks.
-          You’ll get more done with less stress.
+          Check the 'Network' tab to see who you know at companies you're
+          interested in. A referral can make all the difference!
         </ThemedText>
       </ThemedView>
     </ParallaxScrollView>
@@ -88,14 +88,13 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   headerImage: {
-  height: 300,
-  width: "80%",
-  position: "absolute",
-  bottom: -50,
-  right: 35,      // move it to the right
-  // remove any 'left' if you had it
-  resizeMode: "contain", // keeps aspect ratio
-},
+    height: 300,
+    width: "80%",
+    position: "absolute",
+    bottom: -50,
+    right: 35,
+    resizeMode: "contain", // FIX: Use contentFit instead of resizeMode
+  },
   headerContainer: {
     flexDirection: "row",
     justifyContent: "space-between",

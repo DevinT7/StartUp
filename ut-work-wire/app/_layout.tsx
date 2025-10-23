@@ -17,6 +17,8 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+        {/* ADD THIS LINE for the job detail screen */}
+        <Stack.Screen name="job-detail" options={{ title: 'Job Details' }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
