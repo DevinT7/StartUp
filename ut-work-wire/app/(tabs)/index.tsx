@@ -24,7 +24,7 @@ export default function HomeScreen() {
       <ThemedView style={styles.headerContainer}>
         <View>
           <ThemedText type="title" style={styles.titleText}>
-            Welcome Back 👋
+            Welcome Back 
           </ThemedText>
           <ThemedText type="subtitle" style={styles.subText}>
             Ready to get things done today?
