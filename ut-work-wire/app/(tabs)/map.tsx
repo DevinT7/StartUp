@@ -1,10 +1,13 @@
 import { View, StyleSheet } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-import { MY_FRIENDS, MY_PROFILE } from "@/lib/mockData"; // Import dynamic data
+// import { MY_FRIENDS, MY_PROFILE } from "@/lib/mockData"; // <-- 1. DELETE THIS IMPORT
+import { useData } from "@/lib/DataContext"; // <-- 2. ADD THIS IMPORT
 
 export default function MapScreen() {
-  // Combine yourself and your friends for the map
-  const allPins = [MY_PROFILE, ...MY_FRIENDS];
+  const { profile, friends } = useData(); // <-- 3. GET DATA FROM CONTEXT
+
+  // 4. This is now fully dynamic
+  const allPins = [profile, ...friends]; 
 
   return (
     <View style={styles.container}>
@@ -23,7 +26,7 @@ export default function MapScreen() {
             coordinate={person.coords}
             title={person.name}
             description={`Works at ${person.work}`}
-            pinColor={person.id === MY_PROFILE.id ? "blue" : undefined} // Differentiate user
+            pinColor={person.id === profile.id ? "blue" : undefined} 
           />
         ))}
       </MapView>

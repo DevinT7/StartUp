@@ -6,9 +6,12 @@ import { ThemedView } from "@/components/themed-view";
 import ParallaxScrollView from "@/components/parallax-scroll-view";
 import { HelloWave } from "@/components/hello-wave";
 import { Ionicons } from "@expo/vector-icons";
-import { MY_PROFILE } from "@/lib/mockData"; // Import user data
+// import { MY_PROFILE } from "@/lib/mockData"; // <-- 1. DELETE THIS IMPORT
+import { useData } from "@/lib/DataContext"; // <-- 2. ADD THIS IMPORT
 
 export default function HomeScreen() {
+  const { profile } = useData(); // <-- 3. GET PROFILE FROM CONTEXT
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#FCEEE3", dark: "#1A1A1A" }}
@@ -23,7 +26,7 @@ export default function HomeScreen() {
       <ThemedView style={styles.headerContainer}>
         <View>
           <ThemedText type="title" style={styles.titleText}>
-            Welcome Back, {MY_PROFILE.name.split(" ")[0]}!
+            Welcome Back, {profile.name.split(" ")[0]}! {/* 4. This is now dynamic */}
           </ThemedText>
           <ThemedText type="subtitle" style={styles.subText}>
             Ready to find your next opportunity?
@@ -32,7 +35,7 @@ export default function HomeScreen() {
         <HelloWave />
       </ThemedView>
 
-      {/* Quick Actions */}
+      {/* Quick Actions (No changes needed here) */}
       <ThemedView style={styles.quickActions}>
         <ThemedText type="subtitle" style={styles.sectionTitle}>
           Quick Access
@@ -55,7 +58,6 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.buttonRow}>
-          {/* This button is REPURPOSED */}
           <Link href="/(tabs)/reviews" asChild>
             <TouchableOpacity style={styles.actionButton}>
               <Ionicons name="people-outline" size={42} color="#cc5500" />
@@ -72,7 +74,7 @@ export default function HomeScreen() {
         </View>
       </ThemedView>
 
-      {/* Tip / Info Section */}
+      {/* Tip / Info Section (No changes needed here) */}
       <ThemedView style={styles.tipCard}>
         <ThemedText type="subtitle" style={styles.tipTitle}>
           💡 Networking Tip
@@ -86,6 +88,7 @@ export default function HomeScreen() {
   );
 }
 
+// ... STYLES (No changes, same as before)
 const styles = StyleSheet.create({
   headerImage: {
     height: 300,
@@ -93,7 +96,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: -50,
     right: 35,
-    resizeMode: "contain", // FIX: Use contentFit instead of resizeMode
+    resizeMode: "contain", 
   },
   headerContainer: {
     flexDirection: "row",

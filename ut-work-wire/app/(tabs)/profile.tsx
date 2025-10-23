@@ -1,23 +1,27 @@
 import { SafeAreaView, Text, StyleSheet, View, FlatList, TouchableOpacity } from "react-native";
-import { MY_PROFILE, MY_FRIENDS } from "@/lib/mockData";
+// import { MY_PROFILE, MY_FRIENDS } from "@/lib/mockData"; // <-- 1. DELETE THIS IMPORT
+import { useData } from "@/lib/DataContext"; // <-- 2. ADD THIS IMPORT
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 
 export default function ProfileScreen() {
+  const { profile, friends } = useData(); // <-- 3. GET DATA FROM CONTEXT
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.profileHeader}>
         <Ionicons name="person-circle-outline" size={80} color="#cc5500" />
-        <Text style={styles.name}>{MY_PROFILE.name}</Text>
-        <Text style={styles.subText}>{MY_PROFILE.major}</Text>
-        <Text style={styles.subText}>Class of {MY_PROFILE.graduation}</Text>
-        <Text style={styles.subText}>Working at: {MY_PROFILE.work}</Text>
+        <Text style={styles.name}>{profile.name}</Text>
+        <Text style={styles.subText}>{profile.major}</Text>
+        <Text style={styles.subText}>Class of {profile.graduation}</Text>
+        <Text style={styles.subText}>Working at: {profile.work}</Text>
       </View>
 
       <View style={styles.friendsSection}>
-        <Text style={styles.sectionHeader}>My Friends ({MY_FRIENDS.length})</Text>
+        {/* 4. This count is now dynamic! */}
+        <Text style={styles.sectionHeader}>My Friends ({friends.length})</Text>
         <FlatList
-          data={MY_FRIENDS.slice(0, 3)} // Show first 3 friends as a preview
+          data={friends.slice(0, 3)} // <-- 5. Use 'friends'
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item) => item.id}
@@ -28,7 +32,6 @@ export default function ProfileScreen() {
             </View>
           )}
         />
-        {/* Link to the 'reviews' file, which is now our Network screen */}
         <Link href="/(tabs)/reviews" asChild> 
           <TouchableOpacity style={styles.button}>
             <Text style={styles.buttonText}>View All Friends</Text>
@@ -39,6 +42,7 @@ export default function ProfileScreen() {
   );
 }
 
+// ... STYLES (No changes, same as before)
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   profileHeader: {

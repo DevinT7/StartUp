@@ -1,16 +1,41 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView } from "react-native";
-import { useLocalSearchParams, Stack } from "expo-router";
-import { ALL_JOBS } from "@/lib/mockData";
+import React from 'react'; // <-- Removed useLayoutEffect
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView, Alert, Share } from "react-native";
+import { useLocalSearchParams, Stack } from "expo-router"; // <-- Removed useRouter
+import * as WebBrowser from 'expo-web-browser'; 
+import { useData } from "@/lib/DataContext"; 
 import { Ionicons } from "@expo/vector-icons";
 
 export default function JobDetailScreen() {
+  const { jobs } = useData(); 
   const { id } = useLocalSearchParams();
-  const job = ALL_JOBS.find((j) => j.id === String(id));
+  const job = jobs.find((j) => j.id === String(id));
+
+  // Function to open browser (no change)
+  const handleApply = async () => {
+    if (!job) return;
+    let url = `https://google.com/search?q=${job.company} ${job.title} careers`;
+    await WebBrowser.openBrowserAsync(url);
+  };
+
+  // Function to share (no change)
+  const handleShare = async () => {
+    if (!job) return;
+    try {
+      await Share.share({
+        message: `Check out this job: ${job.title} at ${job.company}!`,
+      });
+    } catch (error: any) {
+      Alert.alert(error.message);
+    }
+  };
+
+  // We removed the useLayoutEffect hook completely
 
   if (!job) {
     return (
       <SafeAreaView style={styles.container}>
+        {/* Add a default Stack.Screen for the 'not found' state */}
+        <Stack.Screen options={{ title: "Not Found" }} />
         <Text style={styles.title}>Job not found</Text>
       </SafeAreaView>
     );
@@ -18,8 +43,21 @@ export default function JobDetailScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Adds a nice header with a back button */}
-      <Stack.Screen options={{ title: job.company }} />
+      {/* --- THIS IS THE FIX ---
+        We declare the screen options right here in the render.
+        This is the modern Expo Router way to set dynamic options.
+      */}
+      <Stack.Screen 
+        options={{ 
+          title: job.company,
+          headerRight: () => (
+            <TouchableOpacity onPress={handleShare} style={{ marginRight: 10 }}>
+              <Ionicons name="share-social-outline" size={24} color="#cc5500" />
+            </TouchableOpacity>
+          ),
+        }} 
+      />
+      {/* --- END OF FIX --- */}
       
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Text style={styles.title}>{job.title}</Text>
@@ -32,7 +70,7 @@ export default function JobDetailScreen() {
         <Text style={styles.sectionHeader}>Job Description</Text>
         <Text style={styles.description}>{job.description}</Text>
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={handleApply}>
           <Text style={styles.buttonText}>Apply Now</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -40,6 +78,7 @@ export default function JobDetailScreen() {
   );
 }
 
+// ... STYLES (No changes, same as before)
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   scrollContent: {

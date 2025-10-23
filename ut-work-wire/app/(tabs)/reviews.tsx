@@ -1,31 +1,28 @@
 import React, { useState, useMemo } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, SafeAreaView, TextInput } from "react-native";
-import { ALL_USERS, MY_FRIENDS, User } from "@/lib/mockData";
+// import { ALL_USERS, MY_FRIENDS, User } from "@/lib/mockData"; // <-- 1. DELETE THIS IMPORT
+import { useData } from "@/lib/DataContext"; // <-- 2. ADD THIS IMPORT
+import { User } from "@/lib/mockData"; // <-- 2a. Keep User type
 import { Ionicons } from "@expo/vector-icons";
 
-// In a real app, you'd manage this state in a context or with a hook
-const myFriendIds = new Set(MY_FRIENDS.map((f) => f.id));
+export default function NetworkScreen() { 
+  // 3. GET ALL DATA FROM CONTEXT
+  const { friends, nonFriends, addFriend } = useData();
 
-export default function NetworkScreen() { // Renamed component
   const [searchQuery, setSearchQuery] = useState("");
 
   const searchResults = useMemo(() => {
     if (!searchQuery) return [];
-    // Filter users who are NOT already friends
-    return ALL_USERS.filter(
+    // 4. Search the 'nonFriends' list from context
+    return nonFriends.filter(
       (user) =>
-        !myFriendIds.has(user.id) &&
         user.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [searchQuery]);
+  }, [searchQuery, nonFriends]); // <-- 5. Add 'nonFriends'
 
-  const addFriend = (user: User) => {
-    // In a real app, this would be an API call
-    console.log("Adding friend:", user.name);
-    myFriendIds.add(user.id);
-    MY_FRIENDS.push(user);
+  const handleAddFriend = (user: User) => {
+    addFriend(user); // <-- 6. CALL THE FUNCTION FROM CONTEXT
     setSearchQuery(""); // Clear search
-    // You would then need to trigger a re-render
   };
 
   return (
@@ -46,7 +43,7 @@ export default function NetworkScreen() { // Renamed component
       {/* Conditional List: Search Results or My Friends */}
       {searchQuery.length > 0 ? (
         <FlatList
-          data={searchResults}
+          data={searchResults} // This is now dynamic
           keyExtractor={(item) => item.id}
           ListHeaderComponent={<Text style={styles.listHeader}>Search Results</Text>}
           renderItem={({ item }) => (
@@ -55,7 +52,8 @@ export default function NetworkScreen() { // Renamed component
                 <Text style={styles.name}>{item.name}</Text>
                 <Text style={styles.subText}>{item.work}</Text>
               </View>
-              <TouchableOpacity style={styles.addButton} onPress={() => addFriend(item)}>
+              {/* 7. Wire up the button */}
+              <TouchableOpacity style={styles.addButton} onPress={() => handleAddFriend(item)}>
                 <Ionicons name="add" size={24} color="#cc5500" />
               </TouchableOpacity>
             </View>
@@ -63,9 +61,9 @@ export default function NetworkScreen() { // Renamed component
         />
       ) : (
         <FlatList
-          data={MY_FRIENDS}
+          data={friends} // <-- 8. Use 'friends' from context
           keyExtractor={(item) => item.id}
-          ListHeaderComponent={<Text style={styles.listHeader}>My Friends ({MY_FRIENDS.length})</Text>}
+          ListHeaderComponent={<Text style={styles.listHeader}>My Friends ({friends.length})</Text>}
           renderItem={({ item }) => (
             <View style={styles.card}>
               <View>
@@ -81,6 +79,7 @@ export default function NetworkScreen() { // Renamed component
   );
 }
 
+// ... STYLES (No changes, same as before)
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: "#fff" },
   header: { fontSize: 22, fontWeight: "bold", color: "#cc5500", marginBottom: 12 },
