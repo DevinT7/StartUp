@@ -2,6 +2,7 @@
 // In a real app, you'd fetch this data from an API.
 
 export interface Job {
+  requirements: ReactNode;
   id: string;
   title: string;
   company: string;
@@ -24,8 +25,8 @@ export interface User {
 // --- Logged-in User Data ---
 export const MY_PROFILE: User = {
   id: "u1",
-  name: "Devin Thenuwara", // Pulled from your project summary
-  major: "Stats and Data Science", // Inferred from project summary
+  name: "Devin Thenuwara", // From your project summary
+  major: "Stats and Data Science", // From your project summary
   graduation: "2026",
   work: "UT Austin",
   coords: { latitude: 30.2849, longitude: -97.7341 },
